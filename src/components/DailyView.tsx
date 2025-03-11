@@ -25,47 +25,56 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-mono dark:text-gray-300">
-            Hi, {userName || 'there'}! 👋
+    <div className="space-y-8 max-w-4xl mx-auto px-4">
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-light tracking-tight dark:text-gray-200">
+            Welcome back, {userName || 'there'}
           </h2>
-          <h3 className="text-lg font-mono dark:text-gray-300">Today's Habits</h3>
+          <h3 className="text-base text-gray-600 dark:text-gray-400 font-light">
+            Track your daily progress
+          </h3>
         </div>
-        <div className="flex justify-end">
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="px-4 py-2 text-sm font-mono bg-black text-white dark:bg-white dark:text-black hover:opacity-80 rounded-lg"
-          >
-            Add Habit
-          </button>
-        </div>
+        <button
+          onClick={() => setShowAddForm(true)}
+          className="px-5 py-2.5 text-sm bg-gray-900 text-white dark:bg-white dark:text-black
+            rounded-full transition-all duration-300 hover:bg-gray-700 dark:hover:bg-gray-200
+            focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+        >
+          + New Habit
+        </button>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {habits.map((habit) => (
           <div
             key={habit.id}
             className={`
-              p-4 rounded-lg border-2 ${COLORS[parseInt(habit.id) % COLORS.length]} transition-all duration-200
-              bg-[linear-gradient(to_right,rgba(209,213,219,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(209,213,219,0.1)_1px,transparent_1px)]
-              bg-[size:10px_10px]
+              p-5 rounded-xl backdrop-blur-sm
+              bg-white/50 dark:bg-gray-800/50
+              border border-gray-100 dark:border-gray-700
+              shadow-sm hover:shadow-md transition-all duration-300
             `}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => onToggleHabit(habit.id, currentDay)}
-                  className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-300 transform ${habit.days[currentDay] ? `${COLORS[parseInt(habit.id) % COLORS.length]} border-opacity-100` : 'bg-transparent hover:scale-105'}`}
+                  className={`
+                    w-7 h-7 rounded-full flex items-center justify-center
+                    transition-all duration-300 transform
+                    border-2 ${habit.days[currentDay] ? 
+                      `${COLORS[parseInt(habit.id) % COLORS.length]} scale-105` : 
+                      'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'}
+                  `}
                 >
                   {habit.days[currentDay] && (
-                    <span className="transform transition-transform duration-300 scale-100 text-gray-600 dark:text-gray-300">
+                    <span className="transform scale-90 text-gray-700 dark:text-gray-300">
                       ✓
                     </span>
                   )}
                 </button>
-                <span className="font-mono dark:text-gray-300">{habit.name}</span>
+                <span className="text-gray-800 dark:text-gray-200 font-light">{habit.name}</span>
               </div>
             </div>
           </div>
@@ -73,28 +82,32 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
       </div>
 
       {showAddForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
-            <h3 className="text-xl font-mono mb-4 dark:text-gray-300">Add New Habit</h3>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl w-full max-w-md mx-4">
+            <h3 className="text-xl mb-4 font-light dark:text-gray-200">New Habit</h3>
             <input
               type="text"
               value={newHabitName}
               onChange={(e) => setNewHabitName(e.target.value)}
-              className="w-full p-2 border rounded mb-4 dark:bg-gray-700 dark:text-gray-300"
-              placeholder="Enter habit name"
+              className="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-700
+                bg-gray-50 dark:bg-gray-900 dark:text-gray-300
+                focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+              placeholder="What habit would you like to track?"
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowAddForm(false)}
-                className="px-4 py-2 text-sm font-mono text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800
+                  dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddHabit}
-                className="px-4 py-2 text-sm font-mono bg-black text-white dark:bg-white dark:text-black hover:opacity-80"
+                className="px-5 py-2 text-sm bg-gray-900 text-white dark:bg-white dark:text-black
+                  rounded-lg transition-all duration-300 hover:bg-gray-700 dark:hover:bg-gray-200"
               >
-                Add
+                Add Habit
               </button>
             </div>
           </div>
