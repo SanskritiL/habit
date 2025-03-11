@@ -22,6 +22,18 @@ export function WeeklyView({ habits, onToggleHabit }: WeeklyViewProps) {
     return date;
   });
 
+
+  const getHabitColor = (id: number) => {
+    const colors = [
+      'from-mint-200 to-mint-300',
+      'from-pink-200 to-rose-200',
+      'from-sky-200 to-blue-200',
+      'from-violet-200 to-purple-200',
+      'from-amber-200 to-yellow-200'
+    ];
+    return colors[id % colors.length];
+  };
+  
   const getCompletionRate = (habit: Habit): number => {
     const completedDays = weekDates.filter(date => 
       habit.days[date.getDate()]
@@ -70,7 +82,7 @@ export function WeeklyView({ habits, onToggleHabit }: WeeklyViewProps) {
                       h-12 w-12 rounded-xl flex items-center justify-center
                       transition-all duration-300 transform
                       ${isCompleted 
-                        ? `${colorClass} text-white shadow-md scale-105`
+                        ? `bg-gradient-to-r ${getHabitColor(parseInt(habit.id))} text-black shadow-md scale-105`
                         : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}
                       backdrop-blur-sm
                       ${isFutureDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}

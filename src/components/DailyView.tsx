@@ -1,8 +1,8 @@
 'use client';
-import { useState } from 'react'
+import { useState } from 'react';
 import { Habit } from '../types/habit';
-import { COLORS } from '../constants/colors';
 import Image from 'next/image';
+import { updateHabitProgress } from '@/lib/supabase';
 
 interface DailyViewProps {
   habits: Habit[];
@@ -30,7 +30,7 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
       'from-pink-200 to-rose-200',
       'from-sky-200 to-blue-200',
       'from-violet-200 to-purple-200',
-      'from-amber-200 to-yellow-200'
+      'from-amber-200 to-yellow-200',
     ];
     return colors[id % colors.length];
   };
@@ -40,12 +40,7 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
-            <Image
-              src="/avatar.png"
-              alt="User avatar"
-              fill
-              className="object-cover"
-            />
+            <Image src="/avatar.png" alt="User avatar" fill className="object-cover" />
           </div>
           <div className="space-y-2">
             <h2 className="text-2xl font-light tracking-tight dark:text-gray-200">
@@ -72,9 +67,11 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
             key={habit.id}
             className={`
               p-5 rounded-xl backdrop-blur-sm
-              ${habit.days[currentDay] 
-                ? `bg-gradient-to-r ${getHabitColor(parseInt(habit.id))}` 
-                : 'bg-white dark:bg-gray-800'}
+              ${
+                habit.days[currentDay]
+                  ? `bg-gradient-to-r ${getHabitColor(parseInt(habit.id))}`
+                  : 'bg-white dark:bg-gray-800'
+              }
               border border-gray-100 dark:border-gray-700
               shadow-sm hover:shadow-md transition-all duration-300
             `}
@@ -86,9 +83,11 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
                   className={`
                     w-7 h-7 rounded-full flex items-center justify-center
                     transition-all duration-300 transform
-                    ${habit.days[currentDay] 
-                      ? 'bg-gray-900 dark:bg-gray-100' 
-                      : 'border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'}
+                    ${
+                      habit.days[currentDay]
+                        ? 'bg-gray-900 dark:bg-gray-100'
+                        : 'border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                    }
                   `}
                 >
                   {habit.days[currentDay] && (

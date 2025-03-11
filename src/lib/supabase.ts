@@ -78,46 +78,22 @@ export async function createUserHabit(habit: Omit<UserHabit, 'id' | 'created_at'
   return data;
 }
 
-export async function updateHabitProgress(progress: Omit<HabitProgress, 'id'>): Promise<void> {
-  console.log("updating habit progress...");
-  const isoDate = new Date(progress.date).toISOString();
+export async function updateHabitProgress(habitId: string, date: string, completed: boolean) {
+  const { data, error } = await supabase
+    .from('habit_progress')
+    .upsert(
+      {
+        habit_id: habitId,
+        date: date,
+        completed: completed
+      },
+      { onConflict: 'habit_id,date' }
+    );
 
-  try {
-    // Use upsert with onConflict to handle race conditions
-    const { error } = await supabase
-      .from('habit_progress')
-      .upsert({
-        habit_id: progress.habit_id,
-        user_id: progress.user_id,
-        date: isoDate,
-        completed: progress.completed
-      }, {
-        onConflict: 'habit_id,date',
-        ignoreDuplicates: false
-      });
-
-    if (error) {
-      // Check if it's a unique constraint violation
-      if (error.code === '23505') {
-        console.warn('Concurrent update detected, retrying operation...');
-        // Retry the update specifically
-        const { error: retryError } = await supabase
-          .from('habit_progress')
-          .update({ completed: progress.completed })
-          .eq('habit_id', progress.habit_id)
-          .eq('date', isoDate);
-
-        if (retryError) {
-          console.error('Error in retry update:', retryError);
-          throw retryError;
-        }
-      } else {
-        console.error('Error updating habit progress:', error);
-        throw error;
-      }
-    }
-  } catch (err) {
-    console.error('Failed to update habit progress:', err);
-    throw err;
+  if (error) {
+    console.error('Error updating habit progress:', error);
+    throw error;
   }
+
+  return data;
 }

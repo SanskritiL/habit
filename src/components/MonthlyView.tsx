@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import { useState } from 'react';
 import { Habit } from '../types/habit';
@@ -6,10 +6,10 @@ import { COLORS } from '../constants/colors';
 
 interface MonthlyViewProps {
   habits: Habit[];
-  onToggleHabit: (habitId: string, day: number) => void;
+  readOnly?: boolean; // Added readOnly prop
 }
 
-export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
+export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
   const today = new Date();
   const month = today.getMonth();
   const year = today.getFullYear();
@@ -48,24 +48,54 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
   // Get the first day of the month to calculate the calendar grid offset
   const firstDayOfMonth = new Date(year, month, 1).getDay();
 
+  // Weekday abbreviations with unique keys
+  const weekdays = [
+    { key: 'sun', label: 'S' },
+    { key: 'mon', label: 'M' },
+    { key: 'tue', label: 'T' },
+    { key: 'wed', label: 'W' },
+    { key: 'thu', label: 'T' },
+    { key: 'fri', label: 'F' },
+    { key: 'sat', label: 'S' }
+  ];
+
+  // Get habit color based on ID - syncing with DailyView
+  const getHabitColor = (id: string) => {
+    const colors = [
+      'bg-mint-300',
+      'bg-rose-300',
+      'bg-blue-300',
+      'bg-purple-300',
+      'bg-yellow-300',
+    ];
+    console.log("habit color is:")
+    console.log(colors[parseInt(id) % colors.length])
+    if (colors[parseInt(id) % colors.length] === undefined) {
+      return colors[4];
+    }
+    return colors[parseInt(id) % colors.length];
+  };
+
   return (
-    <div className="space-y-6 max-w-full">
-      <h2 className="text-xl font-light tracking-tight dark:text-gray-300">
+    <div className="space-y-4 max-w-full">
+      <h2 className="text-lg font-light tracking-tight dark:text-gray-300">
         {today.toLocaleString('default', { month: 'long' })} {year}
       </h2>
 
-      <div className="w-full bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-gray-100 dark:border-gray-700 shadow-sm">
-        <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-            <div key={day} className="text-center">
-              <span className="font-light text-sm text-gray-500 dark:text-gray-400">
-                {window.innerWidth > 640 ? day : day.charAt(0)}
+      <div className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 backdrop-blur-sm border border-gray-100 dark:border-gray-700 shadow-sm">
+        {/* Compact weekday header with fixed unique keys */}
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {weekdays.map(day => (
+            <div key={day.key} className="text-center">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {day.label}
               </span>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1 md:gap-2">
+        {/* Compact calendar grid */}
+        <div className="grid grid-cols-7 gap-1">
           {/* Empty cells for days before the first of the month */}
           {Array.from({ length: firstDayOfMonth }).map((_, index) => (
             <div key={`empty-${index}`} className="aspect-square" />
@@ -80,29 +110,28 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
               <div
                 key={date}
                 className={`
-                  aspect-square rounded-xl border border-gray-100 dark:border-gray-700
-                  p-2 relative flex flex-col min-h-[100px]
-                  ${isToday ? 'ring-2 ring-gray-400 dark:ring-gray-500 ring-offset-2' : ''}
+                  aspect-square rounded-md border border-gray-100 dark:border-gray-700
+                  relative flex flex-col min-h-[40px] max-h-[60px]
+                  ${isToday ? 'ring-1 ring-gray-400 dark:ring-gray-500' : ''}
                   bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm
                 `}
               >
-                <span className="text-sm text-gray-600 dark:text-gray-400 font-light absolute top-2 left-2">
+                <span className="text-xs text-gray-600 dark:text-gray-400 absolute top-1 left-1">
                   {date}
                 </span>
-                <div className="flex flex-wrap gap-2 mt-6 justify-start items-start p-1">
+                {/* Compact habit indicators */}
+                <div className="flex flex-wrap gap-1 mt-5 justify-center items-center">
                   {habits.map(habit => {
                     const isCompleted = habit.days[date];
                     return (
-                      <button
+                      <div
                         key={`${date}-${habit.id}`}
-                        onClick={() => !isFutureDate && onToggleHabit(habit.id, date)}
-                        disabled={isFutureDate}
                         className={`
-                          w-4 h-4 rounded-full transition-all duration-300 transform
-                          ${isCompleted ? COLORS[parseInt(habit.id) % COLORS.length] : 'bg-gray-100 dark:bg-gray-700'}
-                          ${isFutureDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-125'}
+                          w-2 h-2 rounded-full 
+                          ${isCompleted ? getHabitColor(habit.id) : 'bg-gray-100 dark:bg-gray-700'}
+                          ${isFutureDate ? 'opacity-50' : ''}
                         `}
-                        title={`${habit.name}: ${isCompleted ? 'Completed' : isFutureDate ? 'Future date - cannot be completed yet' : 'Not completed'}`}
+                        title={`${habit.name}: ${isCompleted ? 'Completed' : isFutureDate ? 'Future date' : 'Not completed'}`}
                       />
                     );})}
                 </div>
@@ -111,39 +140,36 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
           })}
         </div>
 
-        {/* Monthly Statistics */}
-        <div className="mt-8 pt-4 border-t border-gray-100 dark:border-gray-700">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-light">
-            <div className="p-4 rounded-xl bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-              <div className="text-gray-500 dark:text-gray-400">Most Consistent Habit</div>
-              <div className="text-lg font-normal dark:text-gray-300">
+        {/* Compact Monthly Statistics */}
+        <div className="mt-4 pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="p-2 rounded-md bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
+              <div className="text-gray-500 dark:text-gray-400">Most Consistent</div>
+              <div className="font-normal truncate dark:text-gray-300">
                 {habits.length > 0
                   ? habits.reduce((prev, current) =>
                       getCompletionRate(current) > getCompletionRate(prev) ? current : prev
                     ).name
-                  : 'No habits yet'}
+                  : 'None'}
               </div>
-              <div className="text-gray-500 dark:text-gray-400 text-sm">highest completion rate</div>
             </div>
-            <div className="p-4 rounded-xl bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
+            <div className="p-2 rounded-md bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
               <div className="text-gray-500 dark:text-gray-400">Best Streak</div>
-              <div className="text-lg font-normal dark:text-gray-300">
+              <div className="font-normal dark:text-gray-300">
                 {habits.length > 0
                   ? Math.max(...habits.map(getLongestStreak))
                   : 0} days
               </div>
-              <div className="text-gray-500 dark:text-gray-400 text-sm">longest streak this month</div>
             </div>
-            <div className="p-4 rounded-xl bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-              <div className="text-gray-500 dark:text-gray-400">Overall Progress</div>
-              <div className="text-lg font-normal dark:text-gray-300">
+            <div className="p-2 rounded-md bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
+              <div className="text-gray-500 dark:text-gray-400">Progress</div>
+              <div className="font-normal dark:text-gray-300">
                 {habits.length > 0
                   ? Math.round(
                       habits.reduce((sum, habit) => sum + getCompletionRate(habit), 0) / habits.length
                     )
                   : 0}%
               </div>
-              <div className="text-gray-500 dark:text-gray-400 text-sm">average completion</div>
             </div>
           </div>
         </div>
