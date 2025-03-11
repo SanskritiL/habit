@@ -99,10 +99,10 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
                         disabled={isFutureDate}
                         className={`
                           w-4 h-4 rounded-full transition-all duration-300 transform
-                          ${isCompleted ? `${COLORS[parseInt(habit.id) % COLORS.length]}` : 'bg-gray-200 dark:bg-gray-600'}
+                          ${isCompleted ? COLORS[parseInt(habit.id) % COLORS.length] : 'bg-gray-100 dark:bg-gray-700'}
                           ${isFutureDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-125'}
                         `}
-                        title={`${habit.name}: ${isCompleted ? 'Completed' : 'Not completed'}`}
+                        title={`${habit.name}: ${isCompleted ? 'Completed' : isFutureDate ? 'Future date - cannot be completed yet' : 'Not completed'}`}
                       />
                     );})}
                 </div>

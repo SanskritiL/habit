@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Habit } from '../types/habit';
 import { COLORS } from '../constants/colors';
+import Image from 'next/image';
 
 interface DailyViewProps {
   habits: Habit[];
@@ -25,11 +26,11 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
 
   const getHabitColor = (id: number) => {
     const colors = [
-      'from-mint-50 to-mint-100',
-      'from-pink-50 to-rose-50',
-      'from-sky-50 to-blue-50',
-      'from-violet-50 to-purple-50',
-      'from-amber-50 to-yellow-50'
+      'from-mint-200 to-mint-300',
+      'from-pink-200 to-rose-200',
+      'from-sky-200 to-blue-200',
+      'from-violet-200 to-purple-200',
+      'from-amber-200 to-yellow-200'
     ];
     return colors[id % colors.length];
   };
@@ -37,13 +38,23 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
   return (
     <div className="space-y-8 max-w-4xl mx-auto px-4">
       <div className="space-y-6">
-        <div className="space-y-2">
-          <h2 className="text-2xl font-light tracking-tight dark:text-gray-200">
-            Welcome back, {userName || 'there'}
-          </h2>
-          <h3 className="text-base text-gray-600 dark:text-gray-400 font-light">
-            Track your daily progress
-          </h3>
+        <div className="flex items-center gap-4">
+          <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
+            <Image
+              src="/avatar.png"
+              alt="User avatar"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-light tracking-tight dark:text-gray-200">
+              Welcome back, {userName || 'there'}
+            </h2>
+            <h3 className="text-base text-gray-600 dark:text-gray-400 font-light">
+              Track your daily progress
+            </h3>
+          </div>
         </div>
         <button
           onClick={() => setShowAddForm(true)}

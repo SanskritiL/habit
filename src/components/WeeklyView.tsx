@@ -59,46 +59,39 @@ export function WeeklyView({ habits, onToggleHabit }: WeeklyViewProps) {
                   </div>
                 </div>
                 
-                {weekDates.map((date, index) => (
-                  <button
-                    key={index}
-                    onClick={() => onToggleHabit(habit.id, date.getDate())}
-                    className={`
+                {weekDates.map((date, index) => {
+                  // Debug logging remains the same
+                  
+                  const isCompleted = habit.days[date.getDate()];
+                  const isFutureDate = date > today;
+                  const colorClass = COLORS[parseInt(habit.id) % COLORS.length];
+                  
+                  const buttonClass = `
                       h-12 w-12 rounded-xl flex items-center justify-center
                       transition-all duration-300 transform
-                      border ${habit.days[date.getDate()] ? 
-                        `${COLORS[Math.abs(parseInt(habit.id)) % COLORS.length]} text-white` : 
-                        'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}
-                      bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm
-                    `}
-                  >
-                    {habit.days[date.getDate()] && (
-                      <span className="transform scale-90 text-white">✓</span>
-                    )}
-                  </button>
-                ))}
+                      ${isCompleted 
+                        ? `${colorClass} text-white shadow-md scale-105`
+                        : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}
+                      backdrop-blur-sm
+                      ${isFutureDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}
+                    `;
+                  
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => date <= today && onToggleHabit(habit.id, date.getDate())}
+                      disabled={date > today}
+                      className={buttonClass}                    
+                      title={date > today ? 'Future date - cannot be completed yet' : ''}
+                    >
+                      {habit.days[date.getDate()] && (
+                        <span className="transform scale-90 text-black font-medium">✓</span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             ))}
-          </div>
-        </div>
-
-        <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-light">
-            <div className="p-4 rounded-xl bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-              <div className="text-gray-500 dark:text-gray-400">Best Day</div>
-              <div className="text-lg font-normal dark:text-gray-300">Wednesday</div>
-              <div className="text-gray-500 dark:text-gray-400 text-sm">5 habits completed</div>
-            </div>
-            <div className="p-4 rounded-xl bg-gradient-to-r from-white/50 via-pink-50/30 to-purple-50/30 dark:from-gray-800/50 dark:via-pink-900/20 dark:to-purple-900/20 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-              <div className="text-gray-500 dark:text-gray-400">Week's Average</div>
-              <div className="text-lg font-normal dark:text-gray-300">72%</div>
-              <div className="text-gray-500 dark:text-gray-400 text-sm">completion rate</div>
-            </div>
-            <div className="p-4 rounded-xl bg-gradient-to-r from-white/50 via-pink-50/30 to-purple-50/30 dark:from-gray-800/50 dark:via-pink-900/20 dark:to-purple-900/20 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
-              <div className="text-gray-500 dark:text-gray-400">Current Streaks</div>
-              <div className="text-lg font-normal dark:text-gray-300">3 habits</div>
-              <div className="text-gray-500 dark:text-gray-400 text-sm">on track this week</div>
-            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 export const COLORS = [
-  'bg-gradient-to-r from-green-50 to-emerald-50 border-emerald-100',
-  'bg-gradient-to-r from-pink-50 to-rose-50 border-rose-100',
-  'bg-gradient-to-r from-blue-50 to-sky-50 border-sky-100',
-  'bg-gradient-to-r from-purple-50 to-violet-50 border-violet-100',
-  'bg-gradient-to-r from-amber-50 to-yellow-50 border-yellow-100'
+  'bg-gradient-to-r from-green-200 to-emerald-200 border-emerald-300',
+  'bg-gradient-to-r from-pink-200 to-rose-200 border-rose-300',
+  'bg-gradient-to-r from-blue-200 to-sky-200 border-sky-300',
+  'bg-gradient-to-r from-purple-200 to-violet-200 border-violet-300',
+  'bg-gradient-to-r from-amber-200 to-yellow-200 border-yellow-300'
 ];
