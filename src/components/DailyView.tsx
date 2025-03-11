@@ -1,6 +1,5 @@
 'use client';
-
-import { useState } from 'react';
+import { useState } from 'react'
 import { Habit } from '../types/habit';
 import { COLORS } from '../constants/colors';
 
@@ -22,6 +21,17 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
       setNewHabitName('');
       setShowAddForm(false);
     }
+  };
+
+  const getHabitColor = (id: number) => {
+    const colors = [
+      'from-mint-50 to-mint-100',
+      'from-pink-50 to-rose-50',
+      'from-sky-50 to-blue-50',
+      'from-violet-50 to-purple-50',
+      'from-amber-50 to-yellow-50'
+    ];
+    return colors[id % colors.length];
   };
 
   return (
@@ -51,7 +61,9 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
             key={habit.id}
             className={`
               p-5 rounded-xl backdrop-blur-sm
-              bg-white/50 dark:bg-gray-800/50
+              ${habit.days[currentDay] 
+                ? `bg-gradient-to-r ${getHabitColor(parseInt(habit.id))}` 
+                : 'bg-white dark:bg-gray-800'}
               border border-gray-100 dark:border-gray-700
               shadow-sm hover:shadow-md transition-all duration-300
             `}
@@ -63,13 +75,13 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
                   className={`
                     w-7 h-7 rounded-full flex items-center justify-center
                     transition-all duration-300 transform
-                    border-2 ${habit.days[currentDay] ? 
-                      `${COLORS[parseInt(habit.id) % COLORS.length]} scale-105` : 
-                      'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'}
+                    ${habit.days[currentDay] 
+                      ? 'bg-gray-900 dark:bg-gray-100' 
+                      : 'border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'}
                   `}
                 >
                   {habit.days[currentDay] && (
-                    <span className="transform scale-90 text-gray-700 dark:text-gray-300">
+                    <span className="transform scale-90 text-white dark:text-gray-900 font-medium">
                       ✓
                     </span>
                   )}
@@ -83,7 +95,7 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
 
       {showAddForm && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl w-full max-w-md mx-4">
+          <div className="bg-gradient-to-br from-white via-purple-50 to-blue-50 dark:from-gray-800 dark:via-purple-900/30 dark:to-blue-900/30 p-6 rounded-2xl shadow-xl w-full max-w-md mx-4">
             <h3 className="text-xl mb-4 font-light dark:text-gray-200">New Habit</h3>
             <input
               type="text"

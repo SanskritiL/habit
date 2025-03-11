@@ -2,12 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --mint-gradient: linear-gradient(to right, #e0f7f6, #f0fffe);
+  --pink-gradient: linear-gradient(to right, #ffe0f0, #fff0f8);
+  --neutral-gradient: linear-gradient(to right, #f8f8f8, #ffffff);
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  @apply bg-gray-50 dark:bg-gray-900 min-h-screen;
+}
+
+.habit-card {
+  @apply p-4 rounded-xl shadow-sm transition-all duration-300;
+  background: var(--neutral-gradient);
+}
+
+.habit-card.completed-mint {
+  background: var(--mint-gradient);
+}
+
+.habit-card.completed-pink {
+  background: var(--pink-gradient);
+}
+
+.checkbox {
+  @apply w-5 h-5 rounded-md border-2 border-gray-300 flex items-center justify-center transition-all duration-300;
+}
+
+.checkbox.checked {
+  @apply bg-gray-900 border-gray-900;
+}
+
+.checkbox.checked::after {
+  content: "✓";
+  @apply text-white text-sm;
 }
 
 .habit-item {

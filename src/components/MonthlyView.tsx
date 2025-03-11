@@ -54,7 +54,7 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
         {today.toLocaleString('default', { month: 'long' })} {year}
       </h2>
 
-      <div className="w-full bg-white/50 dark:bg-gray-800/50 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-gray-100 dark:border-gray-700 shadow-sm">
+      <div className="w-full bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 backdrop-blur-sm border border-gray-100 dark:border-gray-700 shadow-sm">
         <div className="grid grid-cols-7 gap-1 md:gap-2 mb-4">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
             <div key={day} className="text-center">
@@ -99,7 +99,7 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
                         disabled={isFutureDate}
                         className={`
                           w-4 h-4 rounded-full transition-all duration-300 transform
-                          ${isCompleted ? COLORS[parseInt(habit.id) % COLORS.length] : 'bg-gray-100 dark:bg-gray-700'}
+                          ${isCompleted ? `${COLORS[parseInt(habit.id) % COLORS.length]}` : 'bg-gray-200 dark:bg-gray-600'}
                           ${isFutureDate ? 'opacity-50 cursor-not-allowed' : 'hover:scale-125'}
                         `}
                         title={`${habit.name}: ${isCompleted ? 'Completed' : 'Not completed'}`}
@@ -114,7 +114,7 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
         {/* Monthly Statistics */}
         <div className="mt-8 pt-4 border-t border-gray-100 dark:border-gray-700">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm font-light">
-            <div className="p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
+            <div className="p-4 rounded-xl bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
               <div className="text-gray-500 dark:text-gray-400">Most Consistent Habit</div>
               <div className="text-lg font-normal dark:text-gray-300">
                 {habits.length > 0
@@ -125,7 +125,7 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
               </div>
               <div className="text-gray-500 dark:text-gray-400 text-sm">highest completion rate</div>
             </div>
-            <div className="p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
+            <div className="p-4 rounded-xl bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
               <div className="text-gray-500 dark:text-gray-400">Best Streak</div>
               <div className="text-lg font-normal dark:text-gray-300">
                 {habits.length > 0
@@ -134,7 +134,7 @@ export function MonthlyView({ habits, onToggleHabit }: MonthlyViewProps) {
               </div>
               <div className="text-gray-500 dark:text-gray-400 text-sm">longest streak this month</div>
             </div>
-            <div className="p-4 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
+            <div className="p-4 rounded-xl bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300">
               <div className="text-gray-500 dark:text-gray-400">Overall Progress</div>
               <div className="text-lg font-normal dark:text-gray-300">
                 {habits.length > 0
