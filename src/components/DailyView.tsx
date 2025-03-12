@@ -64,23 +64,7 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, onDeleteHabit, us
     }
   };
 
-  const getHabitColor = (id: number) => {
-    const colors = [
-      'from-mint-200 to-mint-300',
-      'from-pink-200 to-rose-300',
-      'from-sky-200 to-blue-200',
-      'from-violet-200 to-purple-200',
-      'from-amber-200 to-yellow-200',
-      'from-emerald-200 to-green-200',
-      'from-indigo-200 to-slate-200',
-      'from-fuchsia-200 to-purple-200',
-      'from-cyan-200 to-teal-200',
-      'from-orange-200 to-amber-200',
-      'from-lime-200 to-green-200',
-      'from-rose-200 to-red-200'
-    ];
-    return colors[id % colors.length];
-  };
+
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto px-4">
