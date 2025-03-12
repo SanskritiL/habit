@@ -7,13 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: {
-        mint: {
-          50: '#f0faf9',
-          100: '#e0f7f6',
-          200: '#b0e5e2',
-        },
-      }
+      fontFamily: {
+        sans: ['var(--font-geist-sans)'],
+        mono: ['var(--font-geist-mono)'],
+      },
     },
   },
   safelist: [
