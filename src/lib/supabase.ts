@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { UUID } from 'crypto';
 
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
   throw new Error('Missing env.NEXT_PUBLIC_SUPABASE_URL');
@@ -30,9 +29,8 @@ export interface HabitProgress {
   notes?: string;
 }
 
-// Database helper functions
 export async function getUserHabits(userId: string): Promise<UserHabit[]> {
-  console.log("Getting user habits...")
+  console.log("getting user habits....")
   const { data: habits, error: habitsError } = await supabase
     .from('habits')
     .select('*')
@@ -47,8 +45,7 @@ export async function getUserHabits(userId: string): Promise<UserHabit[]> {
 
   if (progressError) throw progressError;
 
-  // Convert progress data into the days format
-  const habitsWithProgress = habits?.map(habit => {
+  return habits?.map(habit => {
     const habitProgress = progress?.filter(p => p.habit_id === habit.id) || [];
     const days = {};
     
@@ -62,12 +59,37 @@ export async function getUserHabits(userId: string): Promise<UserHabit[]> {
       days
     };
   }) || [];
+}
 
-  return habitsWithProgress;
+export async function updateHabitProgress(progress: Omit<HabitProgress, 'id'>): Promise<void> {
+  console.log("updating user habits....")
+
+  const formattedDate = new Date(progress.date).toISOString();
+  
+  const { data: existingProgress } = await supabase
+    .from('habit_progress')
+    .select('id')
+    .eq('habit_id', progress.habit_id)
+    .eq('date', formattedDate)
+    .maybeSingle();
+
+  if (existingProgress) {
+    await supabase
+      .from('habit_progress')
+      .update({ completed: progress.completed })
+      .eq('id', existingProgress.id);
+  } else {
+    await supabase
+      .from('habit_progress')
+      .insert([{
+        ...progress,
+        date: formattedDate
+      }]);
+  }
 }
 
 export async function createUserHabit(habit: Omit<UserHabit, 'id' | 'created_at'>): Promise<UserHabit> {
-  console.log("creating user habits...")
+  console.log("creating user habits....")
   const { data, error } = await supabase
     .from('habits')
     .insert([habit])
@@ -75,25 +97,5 @@ export async function createUserHabit(habit: Omit<UserHabit, 'id' | 'created_at'
     .single();
 
   if (error) throw error;
-  return data;
-}
-
-export async function updateHabitProgress(habitId: string, date: string, completed: boolean) {
-  const { data, error } = await supabase
-    .from('habit_progress')
-    .upsert(
-      {
-        habit_id: habitId,
-        date: date,
-        completed: completed
-      },
-      { onConflict: 'habit_id,date' }
-    );
-
-  if (error) {
-    console.error('Error updating habit progress:', error);
-    throw error;
-  }
-
   return data;
 }

@@ -10,7 +10,7 @@ interface ViewSelectorProps {
 }
 
 export function ViewSelector({ currentView, onViewChange }: ViewSelectorProps) {
-  const views: ViewType[] = ['daily', 'weekly', 'monthly'];
+  const views: ViewType[] = ['daily',  'monthly'];
 
   return (
     <div className="flex gap-2 mb-6">

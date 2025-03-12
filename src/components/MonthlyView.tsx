@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import { useState } from 'react';
 import { Habit } from '../types/habit';
@@ -6,10 +6,11 @@ import { COLORS } from '../constants/colors';
 
 interface MonthlyViewProps {
   habits: Habit[];
-  readOnly?: boolean; // Added readOnly prop
+  readOnly?: boolean;
 }
 
 export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const today = new Date();
   const month = today.getMonth();
   const year = today.getFullYear();
@@ -45,10 +46,8 @@ export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
     return maxStreak;
   };
 
-  // Get the first day of the month to calculate the calendar grid offset
   const firstDayOfMonth = new Date(year, month, 1).getDay();
 
-  // Weekday abbreviations with unique keys
   const weekdays = [
     { key: 'sun', label: 'S' },
     { key: 'mon', label: 'M' },
@@ -59,7 +58,6 @@ export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
     { key: 'sat', label: 'S' }
   ];
 
-  // Get habit color based on ID - syncing with DailyView
   const getHabitColor = (id: string) => {
     const colors = [
       'bg-mint-300',
@@ -68,12 +66,12 @@ export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
       'bg-purple-300',
       'bg-yellow-300',
     ];
-    console.log("habit color is:")
-    console.log(colors[parseInt(id) % colors.length])
-    if (colors[parseInt(id) % colors.length] === undefined) {
-      return colors[4];
-    }
-    return colors[parseInt(id) % colors.length];
+    const colorIndex = parseInt(id) % colors.length;
+    return colors[colorIndex] || colors[colors.length - 1];
+  };
+
+  const getCompletedHabitsForDate = (date: number) => {
+    return habits.filter(habit => habit.days[date]);
   };
 
   return (
@@ -83,64 +81,64 @@ export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
       </h2>
 
       <div className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 backdrop-blur-sm border border-gray-100 dark:border-gray-700 shadow-sm">
-        {/* Compact weekday header with fixed unique keys */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
-          {weekdays.map(day => (
-            <div key={day.key} className="text-center">
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {day.label}
-              </span>
-            </div>
-          ))}
+        <div className="overflow-x-auto">
+          <table className="w-full border-separate border-spacing-0">
+            <thead>
+              <tr>
+                <th className="p-0.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-r border-gray-100 dark:border-gray-700">Date</th>
+                {habits.map(habit => (
+                  <th key={habit.id} className="py-2 px-0 w-8 text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-r border-gray-100 dark:border-gray-700 h-16">
+                    <div className="transform -rotate-90 origin-center">
+                      {habit.name}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {monthDates.map(({ date, dayName }) => {
+                const isToday = date === today.getDate();
+                const isFutureDate = new Date(year, month, date) > today;
+                
+                return (
+                  <tr 
+                    key={date}
+                    className={`
+                      group transition-colors duration-200
+                      ${isToday ? 'bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-700/30 dark:to-gray-700/20' : ''}
+                      hover:bg-gray-50/50 dark:hover:bg-gray-700/20
+                    `}
+                  >
+                    <td className="p-1 border-t border-r border-gray-100 dark:border-gray-700">
+                      <div className="flex flex-col items-center">
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{dayName}</span>
+                        <span className="text-xs text-gray-700 dark:text-gray-300 mt-0.5">{date}</span>
+                      </div>
+                    </td>
+                    {habits.map(habit => (
+                      <td key={habit.id} className="p-1 border-t border-r border-gray-100 dark:border-gray-700">
+                        {habit.days[date] && (
+                          <span className="
+                            inline-flex items-center justify-center
+                            w-3 h-3 rounded-full
+                            bg-gradient-to-br from-gray-200/50 to-gray-300/50
+                            dark:from-gray-600/50 dark:to-gray-700/50
+                            text-gray-600 dark:text-gray-400 text-[10px]
+                            transform transition-all duration-200
+                            group-hover:scale-110
+                          ">
+                            ✓
+                          </span>
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
 
-        {/* Compact calendar grid */}
-        <div className="grid grid-cols-7 gap-1">
-          {/* Empty cells for days before the first of the month */}
-          {Array.from({ length: firstDayOfMonth }).map((_, index) => (
-            <div key={`empty-${index}`} className="aspect-square" />
-          ))}
-          
-          {/* Calendar days */}
-          {monthDates.map(({ date }) => {
-            const isToday = date === today.getDate();
-            const isFutureDate = new Date(year, month, date) > today;
-            
-            return (
-              <div
-                key={date}
-                className={`
-                  aspect-square rounded-md border border-gray-100 dark:border-gray-700
-                  relative flex flex-col min-h-[40px] max-h-[60px]
-                  ${isToday ? 'ring-1 ring-gray-400 dark:ring-gray-500' : ''}
-                  bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm
-                `}
-              >
-                <span className="text-xs text-gray-600 dark:text-gray-400 absolute top-1 left-1">
-                  {date}
-                </span>
-                {/* Compact habit indicators */}
-                <div className="flex flex-wrap gap-1 mt-5 justify-center items-center">
-                  {habits.map(habit => {
-                    const isCompleted = habit.days[date];
-                    return (
-                      <div
-                        key={`${date}-${habit.id}`}
-                        className={`
-                          w-2 h-2 rounded-full 
-                          ${isCompleted ? getHabitColor(habit.id) : 'bg-gray-100 dark:bg-gray-700'}
-                          ${isFutureDate ? 'opacity-50' : ''}
-                        `}
-                        title={`${habit.name}: ${isCompleted ? 'Completed' : isFutureDate ? 'Future date' : 'Not completed'}`}
-                      />
-                    );})}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Compact Monthly Statistics */}
         <div className="mt-4 pt-2 border-t border-gray-100 dark:border-gray-700">
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="p-2 rounded-md bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700">

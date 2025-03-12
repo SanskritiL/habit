@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { ViewSelector, ViewType } from '@/components/ViewSelector';
 import { DailyView } from '@/components/DailyView';
-import { WeeklyView } from '@/components/WeeklyView';
+// import { WeeklyView } from '@/components/WeeklyView';
 import { MonthlyView } from '@/components/MonthlyView';
 import { Habit } from '@/types/habit';
 import { habitCategories, presetHabits } from '@/data/mockHabits';
@@ -246,12 +246,12 @@ export default function Home() {
             />
           )}
 
-          {currentView === 'weekly' && (
+          {/* {currentView === 'weekly' && (
             <WeeklyView
               habits={habits}
               onToggleHabit={toggleHabitDay}
             />
-          )}
+          )} */}
 
           {currentView === 'monthly' && (
             <MonthlyView

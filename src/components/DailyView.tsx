@@ -24,13 +24,44 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
     }
   };
 
+  const handleToggle = async (habitId: string) => {
+    try {
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+      const isCurrentlyCompleted = habits.find(h => h.id === habitId)?.days[currentDay];
+      const habit = habits.find(h => h.id === habitId);
+      
+      if (!habit) return;
+
+      // Update local state
+      onToggleHabit(habitId, currentDay);
+      
+      // Update Supabase with the progress object
+      await updateHabitProgress({
+        user_id: habit.user_id,
+        habit_id: habitId,
+        date: formattedDate,
+        completed: !isCurrentlyCompleted
+      });
+    } catch (error) {
+      console.error('Failed to update habit:', error);
+    }
+  };
+
   const getHabitColor = (id: number) => {
     const colors = [
       'from-mint-200 to-mint-300',
-      'from-pink-200 to-rose-200',
+      'from-pink-200 to-rose-300',
       'from-sky-200 to-blue-200',
       'from-violet-200 to-purple-200',
       'from-amber-200 to-yellow-200',
+      'from-emerald-200 to-green-200',
+      'from-indigo-200 to-slate-200',
+      'from-fuchsia-200 to-purple-200',
+      'from-cyan-200 to-teal-200',
+      'from-orange-200 to-amber-200',
+      'from-lime-200 to-green-200',
+      'from-rose-200 to-red-200'
     ];
     return colors[id % colors.length];
   };
@@ -62,16 +93,12 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
       </div>
 
       <div className="space-y-3">
-        {habits.map((habit) => (
+        {habits.map((habit, index) => (
           <div
             key={habit.id}
             className={`
               p-5 rounded-xl backdrop-blur-sm
-              ${
-                habit.days[currentDay]
-                  ? `bg-gradient-to-r ${getHabitColor(parseInt(habit.id))}`
-                  : 'bg-white dark:bg-gray-800'
-              }
+
               border border-gray-100 dark:border-gray-700
               shadow-sm hover:shadow-md transition-all duration-300
             `}
@@ -79,7 +106,7 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => onToggleHabit(habit.id, currentDay)}
+                  onClick={() => handleToggle(habit.id)}
                   className={`
                     w-7 h-7 rounded-full flex items-center justify-center
                     transition-all duration-300 transform
