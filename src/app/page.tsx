@@ -8,7 +8,7 @@ import { DailyView } from '@/components/DailyView';
 import { MonthlyView } from '@/components/MonthlyView';
 import { Habit } from '@/types/habit';
 import { habitCategories, presetHabits } from '@/data/mockHabits';
-import { getUserHabits, createUserHabit, updateHabitProgress } from '@/lib/supabase';
+import { getUserHabits, createUserHabit, updateHabitProgress, deleteUserHabit } from '@/lib/supabase';
 import { COLORS } from '@/constants/colors';
 
 export default function Home() {
@@ -175,6 +175,27 @@ export default function Home() {
     );
   }
 
+  const handleDeleteHabit = async (habitId: string) => {
+    if (!user) return;
+  
+    setIsLoading(true);
+    setError(null);
+  
+    try {
+      // Delete from Supabase first
+      await deleteUserHabit(habitId, user.id);
+      
+      // If deletion was successful, update local state
+      const updatedHabits = habits.filter(habit => habit.id !== habitId);
+      setHabits(updatedHabits);
+    } catch (error) {
+      console.error('Error deleting habit:', error);
+      setError('Failed to delete habit. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen p-4 sm:p-8 bg-gray-50 dark:bg-gray-900">
       <main className="max-w-4xl mx-auto">
@@ -242,6 +263,7 @@ export default function Home() {
                   setError('Failed to create habit. Please try again.');
                 }
               }}
+              onDeleteHabit={handleDeleteHabit}
               userName={user.firstName || user.username}
             />
           )}

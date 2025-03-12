@@ -138,39 +138,6 @@ export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
             </tbody>
           </table>
         </div>
-
-        <div className="mt-4 pt-2 border-t border-gray-100 dark:border-gray-700">
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="p-2 rounded-md bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
-              <div className="text-gray-500 dark:text-gray-400">Most Consistent</div>
-              <div className="font-normal truncate dark:text-gray-300">
-                {habits.length > 0
-                  ? habits.reduce((prev, current) =>
-                      getCompletionRate(current) > getCompletionRate(prev) ? current : prev
-                    ).name
-                  : 'None'}
-              </div>
-            </div>
-            <div className="p-2 rounded-md bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
-              <div className="text-gray-500 dark:text-gray-400">Best Streak</div>
-              <div className="font-normal dark:text-gray-300">
-                {habits.length > 0
-                  ? Math.max(...habits.map(getLongestStreak))
-                  : 0} days
-              </div>
-            </div>
-            <div className="p-2 rounded-md bg-white dark:bg-gray-800 backdrop-blur-sm border border-gray-100 dark:border-gray-700">
-              <div className="text-gray-500 dark:text-gray-400">Progress</div>
-              <div className="font-normal dark:text-gray-300">
-                {habits.length > 0
-                  ? Math.round(
-                      habits.reduce((sum, habit) => sum + getCompletionRate(habit), 0) / habits.length
-                    )
-                  : 0}%
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

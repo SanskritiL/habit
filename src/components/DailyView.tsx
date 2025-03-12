@@ -8,11 +8,14 @@ interface DailyViewProps {
   habits: Habit[];
   onToggleHabit: (habitId: string, day: number) => void;
   onAddHabit: (name: string) => void;
+  onDeleteHabit?: (habitId: string) => void;
   userName?: string;
 }
 
-export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: DailyViewProps) {
+export function DailyView({ habits, onToggleHabit, onAddHabit, onDeleteHabit, userName }: DailyViewProps) {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [habitToDelete, setHabitToDelete] = useState<string | null>(null);
   const [newHabitName, setNewHabitName] = useState('');
   const currentDay = new Date().getDate();
 
@@ -21,6 +24,19 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
       onAddHabit(newHabitName.trim());
       setNewHabitName('');
       setShowAddForm(false);
+    }
+  };
+
+  const handleDeleteClick = (habitId: string) => {
+    setHabitToDelete(habitId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (habitToDelete && onDeleteHabit) {
+      onDeleteHabit(habitToDelete);
+      setShowDeleteConfirm(false);
+      setHabitToDelete(null);
     }
   };
 
@@ -98,7 +114,6 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
             key={habit.id}
             className={`
               p-5 rounded-xl backdrop-blur-sm
-
               border border-gray-100 dark:border-gray-700
               shadow-sm hover:shadow-md transition-all duration-300
             `}
@@ -125,6 +140,16 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
                 </button>
                 <span className="text-gray-800 dark:text-gray-200 font-light">{habit.name}</span>
               </div>
+              <button
+                onClick={() => handleDeleteClick(habit.id)}
+                className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400
+                  transition-colors duration-200"
+                title="Delete habit"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </button>
             </div>
           </div>
         ))}
@@ -157,6 +182,36 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, userName }: Daily
                   rounded-lg transition-all duration-300 hover:bg-gray-700 dark:hover:bg-gray-200"
               >
                 Add Habit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl w-full max-w-md mx-4">
+            <h3 className="text-xl mb-4 font-light dark:text-gray-200">Delete Habit</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete this habit? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setHabitToDelete(null);
+                }}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800
+                  dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-5 py-2 text-sm bg-red-600 text-white
+                  rounded-lg transition-all duration-300 hover:bg-red-700"
+              >
+                Delete
               </button>
             </div>
           </div>

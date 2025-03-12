@@ -99,3 +99,23 @@ export async function createUserHabit(habit: Omit<UserHabit, 'id' | 'created_at'
   if (error) throw error;
   return data;
 }
+
+export async function deleteUserHabit(habitId: string): Promise<void> {
+  console.log("deleting user habit....")
+  
+  // First delete all progress records for this habit
+  const { error: progressError } = await supabase
+    .from('habit_progress')
+    .delete()
+    .eq('habit_id', habitId);
+
+  if (progressError) throw progressError;
+
+  // Then delete the habit itself
+  const { error: habitError } = await supabase
+    .from('habits')
+    .delete()
+    .eq('id', habitId);
+
+  if (habitError) throw habitError;
+}
