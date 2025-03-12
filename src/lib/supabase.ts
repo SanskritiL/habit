@@ -51,7 +51,7 @@ export async function getUserHabits(userId: string): Promise<UserHabit[]> {
     
     habitProgress.forEach(p => {
       const date = new Date(p.date);
-      days[date.getDate()] = p.completed;
+      (days as { [key: number]: boolean })[date.getDate()] = p.completed;
     });
 
     return {

@@ -22,6 +22,24 @@ export default function Home() {
   const [showWelcome, setShowWelcome] = useState(true);
   const { signOut } = useClerk();
 
+  const handleDeleteHabit = async (habitId: string) => {
+    if (!user) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await deleteUserHabit(habitId);
+      const updatedHabits = habits.filter(habit => habit.id !== habitId);
+      setHabits(updatedHabits);
+    } catch (error) {
+      console.error('Error deleting habit:', error);
+      setError('Failed to delete habit. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handlePresetHabitToggle = (habitId: string) => {
     setSelectedPresetHabits(prev => {
       const newSet = new Set(prev);
@@ -249,7 +267,7 @@ export default function Home() {
                   }
                 }}
                 onDeleteHabit={handleDeleteHabit}
-                userName={user.firstName || user.username}
+                userName={user.firstName ?? user.username ?? ''}
               />
             ) : (
               <MonthlyView habits={habits} />
@@ -260,24 +278,3 @@ export default function Home() {
     </div>
   );
 }
-
-const handleDeleteHabit = async (habitId: string) => {
-  if (!user) return;
-
-  setIsLoading(true);
-  setError(null);
-
-  try {
-    // Delete from Supabase first
-    await deleteUserHabit(habitId);
-    
-    // If deletion was successful, update local state
-    const updatedHabits = habits.filter(habit => habit.id !== habitId);
-    setHabits(updatedHabits);
-  } catch (error) {
-    console.error('Error deleting habit:', error);
-    setError('Failed to delete habit. Please try again.');
-  } finally {
-    setIsLoading(false);
-  }
-};
