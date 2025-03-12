@@ -1,16 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { Habit } from '../types/habit';
-import { COLORS } from '../constants/colors';
 
 interface MonthlyViewProps {
   habits: Habit[];
   readOnly?: boolean;
 }
 
-export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
-  const [selectedDate, setSelectedDate] = useState<number | null>(null);
+export function MonthlyView({ habits }: MonthlyViewProps) {
   const today = new Date();
   const month = today.getMonth();
   const year = today.getFullYear();
@@ -24,55 +21,6 @@ export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
       dayName: date.toLocaleDateString('en-US', { weekday: 'short' })
     };
   });
-
-  const getCompletionRate = (habit: Habit) => {
-    const completedDays = Object.values(habit.days).filter(Boolean).length;
-    return Math.round((completedDays / daysInMonth) * 100);
-  };
-
-  const getLongestStreak = (habit: Habit) => {
-    let currentStreak = 0;
-    let maxStreak = 0;
-
-    for (let i = 1; i <= daysInMonth; i++) {
-      if (habit.days[i]) {
-        currentStreak++;
-        maxStreak = Math.max(maxStreak, currentStreak);
-      } else {
-        currentStreak = 0;
-      }
-    }
-
-    return maxStreak;
-  };
-
-  const firstDayOfMonth = new Date(year, month, 1).getDay();
-
-  const weekdays = [
-    { key: 'sun', label: 'S' },
-    { key: 'mon', label: 'M' },
-    { key: 'tue', label: 'T' },
-    { key: 'wed', label: 'W' },
-    { key: 'thu', label: 'T' },
-    { key: 'fri', label: 'F' },
-    { key: 'sat', label: 'S' }
-  ];
-
-  const getHabitColor = (id: string) => {
-    const colors = [
-      'bg-mint-300',
-      'bg-rose-300',
-      'bg-blue-300',
-      'bg-purple-300',
-      'bg-yellow-300',
-    ];
-    const colorIndex = parseInt(id) % colors.length;
-    return colors[colorIndex] || colors[colors.length - 1];
-  };
-
-  const getCompletedHabitsForDate = (date: number) => {
-    return habits.filter(habit => habit.days[date]);
-  };
 
   return (
     <div className="space-y-4 max-w-full">
@@ -98,7 +46,6 @@ export function MonthlyView({ habits, readOnly = false }: MonthlyViewProps) {
             <tbody>
               {monthDates.map(({ date, dayName }) => {
                 const isToday = date === today.getDate();
-                const isFutureDate = new Date(year, month, date) > today;
                 
                 return (
                   <tr 

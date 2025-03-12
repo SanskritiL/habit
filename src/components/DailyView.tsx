@@ -64,8 +64,6 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, onDeleteHabit, us
     }
   };
 
-
-
   return (
     <div className="space-y-8 max-w-4xl mx-auto px-4">
       <div className="space-y-6">
@@ -93,7 +91,7 @@ export function DailyView({ habits, onToggleHabit, onAddHabit, onDeleteHabit, us
       </div>
 
       <div className="space-y-3">
-        {habits.map((habit, index) => (
+        {habits.map(habit => (
           <div
             key={habit.id}
             className={`
